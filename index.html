@@ -77,10 +77,10 @@
     </div>
 
     <!-- 메인 컨텐츠 영역 -->
-    <div class="flex-1 flex flex-col justify-center px-4 pb-32">
+    <div class="flex-1 flex flex-col justify-center px-4 pb-32" id="main-content">
         
         <!-- 큰 인사말 (Gemini 스타일) -->
-        <div class="text-center mb-8">
+        <div class="text-center mb-8" id="greeting-section">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 leading-tight">
                 그 무엇이든 시켜주세요!<br>다 해드릴게요.
             </h2>
@@ -97,10 +97,25 @@
         
         <!-- 여백 -->
         <div class="flex-1"></div>
+        
+        <!-- 키보드 올라올 때 보이는 작은 제안들 -->
+        <div class="text-center mb-4 hidden" id="compact-suggestions">
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button class="suggestion-pill px-3 py-1 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
+                    🍗 치킨
+                </button>
+                <button class="suggestion-pill px-3 py-1 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
+                    🚕 택시
+                </button>
+                <button class="suggestion-pill px-3 py-1 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
+                    ☕ 커피
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- 하단 입력창 바로 위 작은 제안들 -->
-    <div class="px-4 pb-4">
+    <!-- 하단 입력창 바로 위 작은 제안들 (키보드 없을 때만) -->
+    <div class="px-4 pb-4" id="bottom-suggestions">
         <div class="flex flex-wrap gap-2 justify-center mb-3">
             <button class="suggestion-pill px-3 py-2 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
                 🍗 치킨 주문해줘
@@ -125,7 +140,7 @@
                     class="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400"
                     id="text-input"
                 >
-            
+         
                 <!-- 전송 버튼 -->
                 <button class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors" id="send-btn">
                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,20 +234,92 @@
             }
         });
 
-        // 제안 버튼 클릭
-        document.querySelectorAll('.suggestion-chip').forEach(chip => {
-            chip.addEventListener('click', function() {
-                const text = this.querySelector('p').textContent;
-                textInput.value = text;
-                goToChatScreen(text);
+        // 제안 버튼 클릭 (두 종류 모두)
+        function setupSuggestionButtons() {
+            document.querySelectorAll('.suggestion-pill').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    let text = '';
+                    if (this.textContent.includes('치킨')) {
+                        text = '치킨 주문해줘';
+                    } else if (this.textContent.includes('택시')) {
+                        text = '회사까지 택시 불러줘';
+                    } else if (this.textContent.includes('커피')) {
+                        text = '평소 마시던 커피 주문해줘';
+                    }
+                    
+                    if (text) {
+                        textInput.value = text;
+                        goToChatScreen(text);
+                    }
+                });
             });
+        }
+        
+        // 초기 설정
+        setupSuggestionButtons();
+
+        // 키보드 대응 및 레이아웃 조정
+        const mainContent = document.getElementById('main-content');
+        const greetingSection = document.getElementById('greeting-section');
+        const bottomSuggestions = document.getElementById('bottom-suggestions');
+        const compactSuggestions = document.getElementById('compact-suggestions');
+        
+        let initialViewportHeight = window.innerHeight;
+        let isKeyboardOpen = false;
+
+        // 키보드 감지 및 레이아웃 조정
+        function handleViewportChange() {
+            const currentHeight = window.innerHeight;
+            const heightDifference = initialViewportHeight - currentHeight;
+            
+            // 키보드가 올라온 경우 (높이가 150px 이상 줄어들면)
+            if (heightDifference > 150 && !isKeyboardOpen) {
+                isKeyboardOpen = true;
+                
+                // 레이아웃 조정
+                mainContent.classList.remove('justify-center');
+                mainContent.classList.add('justify-start', 'pt-8');
+                greetingSection.classList.add('mb-4');
+                greetingSection.querySelector('h2').classList.add('text-2xl');
+                greetingSection.querySelector('h2').classList.remove('text-3xl');
+                
+                // 하단 제안들 숨기고 컴팩트 제안들 보이기
+                bottomSuggestions.classList.add('hidden');
+                compactSuggestions.classList.remove('hidden');
+                
+            } 
+            // 키보드가 내려간 경우
+            else if (heightDifference <= 150 && isKeyboardOpen) {
+                isKeyboardOpen = false;
+                
+                // 원래 레이아웃으로 복구
+                mainContent.classList.add('justify-center');
+                mainContent.classList.remove('justify-start', 'pt-8');
+                greetingSection.classList.remove('mb-4');
+                greetingSection.querySelector('h2').classList.remove('text-2xl');
+                greetingSection.querySelector('h2').classList.add('text-3xl');
+                
+                // 원래 제안들 보이기
+                bottomSuggestions.classList.remove('hidden');
+                compactSuggestions.classList.add('hidden');
+            }
+        }
+
+        // 뷰포트 변화 감지
+        window.addEventListener('resize', handleViewportChange);
+        
+        // 입력창 포커스/블러 이벤트
+        textInput.addEventListener('focus', () => {
+            setTimeout(handleViewportChange, 300); // 키보드 애니메이션 후 체크
+        });
+        
+        textInput.addEventListener('blur', () => {
+            setTimeout(handleViewportChange, 300);
         });
 
-        // 키보드 대응
-        window.addEventListener('resize', function() {
-            // 키보드가 올라와도 레이아웃 유지
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        // 초기 뷰포트 높이 저장
+        window.addEventListener('load', function() {
+            initialViewportHeight = window.innerHeight;
         });
     </script>
 </body>
