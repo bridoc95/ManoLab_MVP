@@ -12,25 +12,6 @@
             overflow-x: hidden;
         }
         
-        .voice-button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: all 0.3s ease;
-        }
-        
-        .voice-button:hover {
-            transform: scale(1.05);
-        }
-        
-        .voice-button.recording {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            animation: pulse-recording 1.5s infinite;
-        }
-        
-        @keyframes pulse-recording {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
         .suggestion-chip {
             background: rgba(255, 255, 255, 0.9);
             border: 1px solid #e2e8f0;
@@ -59,13 +40,6 @@
             border-color: #667eea;
             background: white;
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-        
-        .main-greeting {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
     </style>
 </head>
@@ -140,10 +114,10 @@
                     class="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400"
                     id="text-input"
                 >
-         
+                
                 <!-- 전송 버튼 -->
-                <button class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors" id="send-btn">
-                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button class="w-10 h-10 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center transition-colors" id="send-btn">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                     </svg>
                 </button>
@@ -151,80 +125,26 @@
         </div>
     </div>
 
-    <!-- 전체 화면 음성 인식 오버레이 -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center hidden z-50" id="voice-overlay">
-        <div class="bg-white rounded-3xl p-8 text-center max-w-sm mx-4">
-            <!-- 음성 파형 애니메이션 -->
-            <div class="flex items-center justify-center gap-1 mb-6" id="waveform">
-                <div class="w-1 bg-red-500 rounded-full animate-pulse" style="height: 12px;"></div>
-                <div class="w-1 bg-red-500 rounded-full animate-pulse" style="height: 24px; animation-delay: 0.1s;"></div>
-                <div class="w-1 bg-red-500 rounded-full animate-pulse" style="height: 32px; animation-delay: 0.2s;"></div>
-                <div class="w-1 bg-red-500 rounded-full animate-pulse" style="height: 18px; animation-delay: 0.3s;"></div>
-                <div class="w-1 bg-red-500 rounded-full animate-pulse" style="height: 28px; animation-delay: 0.4s;"></div>
-                <div class="w-1 bg-red-500 rounded-full animate-pulse" style="height: 16px; animation-delay: 0.5s;"></div>
-                <div class="w-1 bg-red-500 rounded-full animate-pulse" style="height: 30px; animation-delay: 0.6s;"></div>
-                <div class="w-1 bg-red-500 rounded-full animate-pulse" style="height: 20px; animation-delay: 0.7s;"></div>
-            </div>
-            
-            <h3 class="text-xl font-semibold text-gray-800 mb-2">듣고 있어요</h3>
-            <p class="text-gray-600 mb-6">편하게 말씀해주세요</p>
-            
-            <button class="voice-button recording w-16 h-16 rounded-full flex items-center justify-center mx-auto" id="stop-recording">
-                <div class="w-4 h-4 bg-white rounded"></div>
-            </button>
-        </div>
-    </div>
-
     <script>
-        const voiceBtn = document.getElementById('voice-btn');
         const sendBtn = document.getElementById('send-btn');
-        const voiceOverlay = document.getElementById('voice-overlay');
         const textInput = document.getElementById('text-input');
-        const stopRecording = document.getElementById('stop-recording');
         
-        let isRecording = false;
-
-        // 음성 녹음 토글
-        function toggleRecording() {
-            if (!isRecording) {
-                startRecording();
-            } else {
-                stopRecordingFunc();
-            }
-        }
-
-        function startRecording() {
-            isRecording = true;
-            voiceOverlay.classList.remove('hidden');
-            voiceBtn.classList.add('recording');
-        }
-
-        function stopRecordingFunc() {
-            isRecording = false;
-            voiceOverlay.classList.add('hidden');
-            voiceBtn.classList.remove('recording');
-        }
-
         // 텍스트 전송
         function sendMessage() {
             const message = textInput.value.trim();
             if (message) {
                 console.log('메시지 전송:', message);
                 textInput.value = '';
-                // 여기서 실제 메시지 처리
                 goToChatScreen(message);
             }
         }
 
         // 채팅 화면으로 이동 (시뮬레이션)
         function goToChatScreen(message) {
-            // 실제로는 새 화면으로 이동하거나 상태 변경
             alert(`"${message}" 명령을 처리합니다!`);
         }
 
         // 이벤트 리스너들
-        voiceBtn.addEventListener('click', toggleRecording);
-        stopRecording.addEventListener('click', stopRecordingFunc);
         sendBtn.addEventListener('click', sendMessage);
 
         // Enter 키로 전송
@@ -257,70 +177,6 @@
         
         // 초기 설정
         setupSuggestionButtons();
-
-        // 키보드 대응 및 레이아웃 조정
-        const mainContent = document.getElementById('main-content');
-        const greetingSection = document.getElementById('greeting-section');
-        const bottomSuggestions = document.getElementById('bottom-suggestions');
-        const compactSuggestions = document.getElementById('compact-suggestions');
-        
-        let initialViewportHeight = window.innerHeight;
-        let isKeyboardOpen = false;
-
-        // 키보드 감지 및 레이아웃 조정
-        function handleViewportChange() {
-            const currentHeight = window.innerHeight;
-            const heightDifference = initialViewportHeight - currentHeight;
-            
-            // 키보드가 올라온 경우 (높이가 150px 이상 줄어들면)
-            if (heightDifference > 150 && !isKeyboardOpen) {
-                isKeyboardOpen = true;
-                
-                // 레이아웃 조정
-                mainContent.classList.remove('justify-center');
-                mainContent.classList.add('justify-start', 'pt-8');
-                greetingSection.classList.add('mb-4');
-                greetingSection.querySelector('h2').classList.add('text-2xl');
-                greetingSection.querySelector('h2').classList.remove('text-3xl');
-                
-                // 하단 제안들 숨기고 컴팩트 제안들 보이기
-                bottomSuggestions.classList.add('hidden');
-                compactSuggestions.classList.remove('hidden');
-                
-            } 
-            // 키보드가 내려간 경우
-            else if (heightDifference <= 150 && isKeyboardOpen) {
-                isKeyboardOpen = false;
-                
-                // 원래 레이아웃으로 복구
-                mainContent.classList.add('justify-center');
-                mainContent.classList.remove('justify-start', 'pt-8');
-                greetingSection.classList.remove('mb-4');
-                greetingSection.querySelector('h2').classList.remove('text-2xl');
-                greetingSection.querySelector('h2').classList.add('text-3xl');
-                
-                // 원래 제안들 보이기
-                bottomSuggestions.classList.remove('hidden');
-                compactSuggestions.classList.add('hidden');
-            }
-        }
-
-        // 뷰포트 변화 감지
-        window.addEventListener('resize', handleViewportChange);
-        
-        // 입력창 포커스/블러 이벤트
-        textInput.addEventListener('focus', () => {
-            setTimeout(handleViewportChange, 300); // 키보드 애니메이션 후 체크
-        });
-        
-        textInput.addEventListener('blur', () => {
-            setTimeout(handleViewportChange, 300);
-        });
-
-        // 초기 뷰포트 높이 저장
-        window.addEventListener('load', function() {
-            initialViewportHeight = window.innerHeight;
-        });
     </script>
 </body>
 </html>
