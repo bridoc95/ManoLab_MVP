@@ -77,50 +77,41 @@
     </div>
 
     <!-- 메인 컨텐츠 영역 -->
-    <div class="flex-1 flex flex-col px-4 pb-32">
+    <div class="flex-1 flex flex-col justify-center px-4 pb-32">
         
         <!-- 큰 인사말 (Gemini 스타일) -->
         <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-gray-800 mb-4 leading-tight">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 leading-tight">
                 그 무엇이든 시켜주세요!<br>다 해드릴게요.
             </h2>
-        </div>
-        
-        <!-- 예시 명령어들 (Gemini 스타일) -->
-        <div class="space-y-3 mb-8">
-            <button class="suggestion-chip w-full p-4 rounded-2xl text-left shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="flex items-center">
-                    <span class="text-2xl mr-4">🍗</span>
-                    <div class="flex-1">
-                        <p class="font-medium text-gray-800 text-lg">치킨 주문해줘</p>
-                        <p class="text-sm text-gray-500 mt-1">평소 자주 시키던 곳에서 바로 주문</p>
-                    </div>
+            
+            <!-- 메인 음성 상태 (크고 둥글게) -->
+            <div class="inline-flex items-center space-x-4 bg-green-50 px-8 py-6 rounded-full border-2 border-green-200 shadow-lg">
+                <div class="relative">
+                    <div class="w-6 h-6 bg-green-500 rounded-full animate-pulse"></div>
+                    <div class="absolute top-0 left-0 w-6 h-6 bg-green-400 rounded-full animate-ping"></div>
                 </div>
-            </button>
-
-            <button class="suggestion-chip w-full p-4 rounded-2xl text-left shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="flex items-center">
-                    <span class="text-2xl mr-4">🚕</span>
-                    <div class="flex-1">
-                        <p class="font-medium text-gray-800 text-lg">회사까지 택시 불러줘</p>
-                        <p class="text-sm text-gray-500 mt-1">현재 위치에서 목적지까지</p>
-                    </div>
-                </div>
-            </button>
-
-            <button class="suggestion-chip w-full p-4 rounded-2xl text-left shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="flex items-center">
-                    <span class="text-2xl mr-4">☕</span>
-                    <div class="flex-1">
-                        <p class="font-medium text-gray-800 text-lg">평소 마시던 커피 주문해줘</p>
-                        <p class="text-sm text-gray-500 mt-1">스타벅스 아이스 아메리카노</p>
-                    </div>
-                </div>
-            </button>
+                <span class="text-green-700 font-bold text-xl" id="voice-status">🎤 지금 바로 말씀하세요!</span>
+            </div>
         </div>
         
         <!-- 여백 -->
         <div class="flex-1"></div>
+    </div>
+
+    <!-- 하단 입력창 바로 위 작은 제안들 -->
+    <div class="px-4 pb-4">
+        <div class="flex flex-wrap gap-2 justify-center mb-3">
+            <button class="suggestion-pill px-3 py-2 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
+                🍗 치킨 주문해줘
+            </button>
+            <button class="suggestion-pill px-3 py-2 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
+                🚕 택시 불러줘
+            </button>
+            <button class="suggestion-pill px-3 py-2 rounded-full text-xs font-medium bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
+                ☕ 커피 주문해줘
+            </button>
+        </div>
     </div>
 
     <!-- 하단 고정 입력창 -->
@@ -134,14 +125,7 @@
                     class="flex-1 bg-transparent outline-none text-gray-700 placeholder-gray-400"
                     id="text-input"
                 >
-                
-                <!-- 음성 버튼 -->
-                <button class="voice-button w-10 h-10 rounded-full flex items-center justify-center" id="voice-btn">
-                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 715 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"></path>
-                    </svg>
-                </button>
-                
+            
                 <!-- 전송 버튼 -->
                 <button class="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition-colors" id="send-btn">
                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
